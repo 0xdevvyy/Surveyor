@@ -8,6 +8,8 @@
         "dev": "vp dev",
         "check": "vp check",
         "check:fix": "vp check --fix",
+        "format": "prettier --write resources/",
+        "format:check": "prettier --check resources/",
         "types:check": "vue-tsc --noEmit"
     },
     "dependencies": {
