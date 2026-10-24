@@ -10,6 +10,20 @@
 
         @fonts
 
+        <script>
+            try {
+                const themePreference = localStorage.getItem('surveyor-theme');
+                if (themePreference === 'dark' || themePreference === 'light') {
+                    document.documentElement.classList.toggle(
+                        'dark',
+                        themePreference === 'dark',
+                    );
+                }
+            } catch (error) {
+                console.error('Unable to restore the saved theme preference.', error);
+            }
+        </script>
+
         @vite(['resources/css/app.css', 'resources/js/app.ts', "resources/js/pages/{$page['component']}.vue"])
         <x-inertia::head>
             <title>{{ config('app.name', 'Laravel') }}</title>
