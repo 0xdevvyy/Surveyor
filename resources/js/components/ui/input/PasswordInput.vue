@@ -2,6 +2,8 @@
 import { ref } from "vue";
 import { cn } from "@/lib/utils";
 
+defineOptions({ inheritAttrs: false });
+
 withDefaults(
     defineProps<{
         placeholder?: string;
@@ -22,6 +24,7 @@ const isVisible = ref(false);
 <template>
     <div class="relative">
         <input
+            v-bind="$attrs"
             v-model="model"
             :type="isVisible ? 'text' : 'password'"
             :placeholder="placeholder"
