@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import { LoaderCircle, MapPin } from '@lucide/vue';
 import { home } from '@/routes';
 import { Button } from '@/components/ui/button';
 import { Checkbox, Input, Label, PasswordInput } from '@/components/ui/input';
@@ -47,25 +48,11 @@ function submit(): void {
                 <span
                     class="flex size-11 items-center justify-center rounded-xl bg-white/10 text-lake-mist ring-1 ring-white/15"
                 >
-                    <svg
+                    <MapPin
                         aria-hidden="true"
-                        viewBox="0 0 24 24"
-                        fill="none"
                         class="size-6"
-                    >
-                        <path
-                            d="M12 21s7-6.1 7-12a7 7 0 1 0-14 0c0 5.9 7 12 7 12Z"
-                            stroke="currentColor"
-                            stroke-width="1.7"
-                        />
-                        <circle
-                            cx="12"
-                            cy="9"
-                            r="2.5"
-                            stroke="currentColor"
-                            stroke-width="1.7"
-                        />
-                    </svg>
+                        :stroke-width="1.7"
+                    />
                 </span>
                 <span class="text-xl font-semibold tracking-wide"
                     >Surveyor</span
@@ -109,25 +96,11 @@ function submit(): void {
                     <span
                         class="flex size-10 items-center justify-center rounded-xl bg-capas-navy text-lake-mist"
                     >
-                        <svg
+                        <MapPin
                             aria-hidden="true"
-                            viewBox="0 0 24 24"
-                            fill="none"
                             class="size-5"
-                        >
-                            <path
-                                d="M12 21s7-6.1 7-12a7 7 0 1 0-14 0c0 5.9 7 12 7 12Z"
-                                stroke="currentColor"
-                                stroke-width="1.7"
-                            />
-                            <circle
-                                cx="12"
-                                cy="9"
-                                r="2.5"
-                                stroke="currentColor"
-                                stroke-width="1.7"
-                            />
-                        </svg>
+                            :stroke-width="1.7"
+                        />
                     </span>
                     <span class="text-lg font-semibold tracking-wide"
                         >Surveyor</span
@@ -237,29 +210,11 @@ function submit(): void {
                         :disabled="form.processing"
                         class="w-full rounded-lg"
                     >
-                        <svg
+                        <LoaderCircle
                             v-if="form.processing"
                             aria-hidden="true"
                             class="size-4 animate-spin"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                        >
-                            <circle
-                                cx="12"
-                                cy="12"
-                                r="9"
-                                stroke="currentColor"
-                                stroke-width="3"
-                                class="opacity-25"
-                            />
-                            <path
-                                d="M21 12a9 9 0 0 0-9-9"
-                                stroke="currentColor"
-                                stroke-width="3"
-                                stroke-linecap="round"
-                                class="opacity-80"
-                            />
-                        </svg>
+                        />
                         {{ form.processing ? 'Signing in...' : 'Sign in' }}
                     </Button>
                 </form>

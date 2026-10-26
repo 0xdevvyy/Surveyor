@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
 import { cn } from "@/lib/utils";
+import { X } from "@lucide/vue";
 
 withDefaults(
     defineProps<{
@@ -59,17 +60,7 @@ onMounted(syncDialogState);
             class="absolute top-4 right-4 rounded-sm p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
             @click="closeDialog"
         >
-            <svg
-                aria-hidden="true"
-                class="size-4"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-            >
-                <path d="m18 6-12 12M6 6l12 12" />
-            </svg>
+            <X aria-hidden="true" class="size-4" />
         </button>
         <slot />
     </dialog>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { cn } from "@/lib/utils";
+import { ChevronLeft, ChevronRight } from "@lucide/vue";
 
 const props = withDefaults(
     defineProps<{
@@ -48,7 +49,7 @@ function setPage(nextPage: number): void {
             class="inline-flex size-9 items-center justify-center rounded-md border border-input bg-background text-sm hover:bg-accent disabled:pointer-events-none disabled:opacity-50"
             @click="setPage(currentPage - 1)"
         >
-            <span aria-hidden="true">‹</span>
+            <ChevronLeft aria-hidden="true" class="size-4" />
         </button>
         <button
             v-for="pageNumber in visiblePages"
@@ -74,7 +75,7 @@ function setPage(nextPage: number): void {
             class="inline-flex size-9 items-center justify-center rounded-md border border-input bg-background text-sm hover:bg-accent disabled:pointer-events-none disabled:opacity-50"
             @click="setPage(currentPage + 1)"
         >
-            <span aria-hidden="true">›</span>
+            <ChevronRight aria-hidden="true" class="size-4" />
         </button>
     </nav>
 </template>

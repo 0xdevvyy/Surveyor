@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { cn } from "@/lib/utils";
+import { Search } from "@lucide/vue";
 
 withDefaults(
     defineProps<{
@@ -21,18 +22,10 @@ const model = defineModel<string>({ default: "" });
 
 <template>
     <div class="relative">
-        <svg
+        <Search
             aria-hidden="true"
             class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-        >
-            <circle cx="11" cy="11" r="8" />
-            <path d="m21 21-4.35-4.35" />
-        </svg>
+        />
         <input
             v-model="model"
             type="search"
