@@ -19,13 +19,13 @@ function submit(): void {
 </script>
 
 <template>
-    <Head title="Sign in" />
+    <Head title="Log in" />
 
     <main
         class="grid min-h-screen bg-background text-foreground lg:grid-cols-[minmax(0,1.05fr)_minmax(28rem,0.95fr)]"
     >
         <section
-            class="relative hidden min-h-screen overflow-hidden bg-capas-navy px-12 py-10 text-white lg:flex lg:flex-col lg:justify-between xl:px-20"
+            class="relative hidden min-h-screen overflow-hidden bg-capas-navy px-12 py-10 text-white lg:flex lg:flex-col xl:px-20"
         >
             <div
                 class="pointer-events-none absolute -top-40 -left-40 size-[34rem] rounded-full border border-white/10"
@@ -42,7 +42,7 @@ function submit(): void {
 
             <Link
                 :href="home()"
-                class="relative z-10 inline-flex w-fit items-center gap-3 rounded-sm focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none"
+                class="relative z-10 inline-flex w-fit items-center gap-3 rounded-sm transition-opacity hover:opacity-80 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none"
                 aria-label="Surveyor home"
             >
                 <span
@@ -59,32 +59,21 @@ function submit(): void {
                 >
             </Link>
 
-            <div class="relative z-10 max-w-xl space-y-6 py-16">
-                <p
-                    class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3 py-1.5 text-xs font-medium tracking-[0.16em] text-lake-mist uppercase"
-                >
-                    <span class="size-1.5 rounded-full bg-crater-teal" />
-                    Community insights, made meaningful
-                </p>
+            <div
+                class="relative z-10 flex max-w-xl flex-1 flex-col justify-center gap-6"
+            >
                 <h1
                     class="text-5xl leading-[1.12] font-semibold tracking-tight xl:text-6xl"
                 >
-                    Better data.
+                    Helping people to Survey Better.
                     <span class="block text-lake-mist"
-                        >Stronger communities.</span
+                        >Better Data, Better Life.</span
                     >
                 </h1>
                 <p class="max-w-lg text-lg leading-8 text-white/70">
                     A thoughtful way to understand local needs, bring people
                     together, and make every response count.
                 </p>
-            </div>
-
-            <div
-                class="relative z-10 flex items-center gap-3 text-sm text-white/55"
-            >
-                <span class="h-px w-8 bg-crater-teal" />
-                <span>Listen closely. Make a difference.</span>
             </div>
         </section>
 
@@ -119,7 +108,7 @@ function submit(): void {
                         Sign in to your account
                     </h2>
                     <p class="text-muted-foreground">
-                        Enter your details to continue to Surveyor.
+                        Enter your account info to continue to Surveyor.
                     </p>
                 </div>
 
@@ -198,7 +187,7 @@ function submit(): void {
                         />
                         <Label
                             for="remember"
-                            class="cursor-pointer text-sm text-muted-foreground"
+                            class="cursor-pointer text-sm text-muted-foreground transition-colors hover:text-foreground"
                         >
                             Remember me
                         </Label>
@@ -208,7 +197,7 @@ function submit(): void {
                         type="submit"
                         size="lg"
                         :disabled="form.processing"
-                        class="w-full rounded-lg"
+                        class="w-full rounded-lg transition-[transform,box-shadow] hover:shadow-md active:scale-[0.99]"
                     >
                         <LoaderCircle
                             v-if="form.processing"
