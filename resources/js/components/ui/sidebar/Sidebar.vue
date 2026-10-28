@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import type { ClassValue } from "clsx";
 import { cn } from "@/lib/utils";
 
 withDefaults(
     defineProps<{
         side?: "left" | "right";
-        class?: string;
+        class?: ClassValue;
     }>(),
     {
         side: "left",

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enum\RoleEnum;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -20,7 +21,7 @@ use Illuminate\Support\Carbon;
  * @property string $id
  * @property string $email
  * @property string|null $avatar_path
- * @property string $role
+ * @property RoleEnum $role
  * @property Carbon|null $email_verified_at
  * @property string $password
  * @property string|null $remember_token
@@ -74,7 +75,7 @@ class User extends Authenticatable
         return [
             'id' => 'string',
             'email' => 'string',
-            'role' => 'string',
+            'role' => RoleEnum::class,
             'avatar_path' => 'string',
             'email_verified_at' => 'datetime',
             'password' => 'hashed',

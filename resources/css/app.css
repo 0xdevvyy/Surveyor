@@ -171,6 +171,22 @@
     * {
         @apply border-border outline-ring/50;
     }
+
+    button:not(:disabled):not([aria-disabled='true']),
+    a[href]:not([aria-disabled='true']),
+    summary,
+    [role='button']:not([aria-disabled='true']) {
+        @apply cursor-pointer;
+    }
+
+    button:not(:disabled):not([aria-disabled='true']) {
+        @apply transition-shadow;
+    }
+
+    button:not(:disabled):not([aria-disabled='true']):hover {
+        @apply shadow-sm;
+    }
+
     body {
         @apply bg-background text-foreground;
     }

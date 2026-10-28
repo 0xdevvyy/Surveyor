@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Link } from "@inertiajs/vue3";
+import type { ClassValue } from "clsx";
 import { cn } from "@/lib/utils";
 
 withDefaults(
@@ -7,7 +8,7 @@ withDefaults(
         href?: string;
         active?: boolean;
         disabled?: boolean;
-        class?: string;
+        class?: ClassValue;
     }>(),
     {
         href: undefined,

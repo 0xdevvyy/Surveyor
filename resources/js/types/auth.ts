@@ -1,8 +1,9 @@
 export type User = {
-    id: number;
+    id: string;
     name: string;
     email: string;
-    avatar?: string;
+    role: string;
+    avatar_path: string;
     email_verified_at: string | null;
     created_at: string;
     updated_at: string;
@@ -12,3 +13,5 @@ export type User = {
 export type Auth = {
     user: User;
 };
+
+// export type UserRole = 'admin' | 'surveyor' | 'resident';

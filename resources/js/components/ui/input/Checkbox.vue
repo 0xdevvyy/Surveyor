@@ -22,7 +22,7 @@ const model = defineModel<boolean>({ default: false });
         :disabled="disabled"
         :class="
             cn(
-                'size-4 shrink-0 rounded-sm border border-primary accent-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50',
+                'size-4 shrink-0 rounded-sm border border-primary accent-primary cursor-pointer focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50',
                 $props.class,
             )
         "
