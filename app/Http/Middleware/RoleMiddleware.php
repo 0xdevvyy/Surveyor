@@ -20,9 +20,17 @@ class RoleMiddleware
     {
         $user = $request->user();
 
-        $allowedRoles = array_filter(array_map(RoleEnum::tryFrom(...), $roles));
+        abort_unless($user !== null, 404);
 
-        abort_unless($user !== null && in_array($user->role, $allowedRoles, true), 404);
+        $allowedRoles = array_map(
+            RoleEnum::tryFrom(...),
+            $roles
+        );
+
+        abort_unless(
+            in_array($user->role, array_filter($allowedRoles), true),
+            404
+        );
 
         return $next($request);
     }

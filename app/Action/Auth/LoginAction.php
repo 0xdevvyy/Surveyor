@@ -25,12 +25,21 @@ final readonly class LoginAction
             return back();
         }
 
+        $role = Auth::user()->role;
+
+        // dd($role);
+
         request()->session()->regenerate();
         Inertia::flash('toast', [
             'type' => 'success',
             'message' => 'Login Successfully!',
         ]);
 
-        return to_route('dashboard'); // for now will be this placeholder dashboard
+        return match ($role->value) {
+            'admin' => to_route('auth.admin.dashboard'),
+            'surveyor' => to_route('auth.surveyor.dashboard'),
+            'resident' => to_route('auth.resident.dashboard'),
+            // default => to_route('index.auth'),
+        };
     }
 }

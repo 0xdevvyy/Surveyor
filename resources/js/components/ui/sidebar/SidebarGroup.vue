@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import type { ClassValue } from "clsx";
 import { cn } from "@/lib/utils";
 
 withDefaults(
     defineProps<{
         label?: string;
-        class?: string;
+        class?: ClassValue;
     }>(),
     {
         label: "",
