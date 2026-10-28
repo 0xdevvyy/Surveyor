@@ -7,7 +7,7 @@ namespace App\Http\Controllers;
 use App\Models\Barangay;
 use App\Models\SurveyQuestion;
 use App\Models\User;
-use Illuminate\Http\Request;
+use Illuminate\Container\Attributes\Authenticated;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -24,9 +24,8 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function surveyorDashboard(Request $request): Response
+    public function surveyorDashboard(#[Authenticated()] User $user): Response
     {
-        $user = $this->authenticatedUser($request);
 
         return Inertia::render('dashboard/Surveyor', [
             'metrics' => [
@@ -40,9 +39,8 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function residentDashboard(Request $request): Response
+    public function residentDashboard(#[Authenticated()] User $user): Response
     {
-        $user = $this->authenticatedUser($request);
 
         return Inertia::render('dashboard/Resident', [
             'metrics' => [
@@ -51,16 +49,5 @@ class DashboardController extends Controller
                 'hasPersonalInformation' => $user->personalInformation()->exists(),
             ],
         ]);
-    }
-
-    private function authenticatedUser(Request $request): User
-    {
-        $user = $request->user();
-
-        if (! ($user instanceof User)) {
-            abort(404);
-        }
-
-        return $user;
     }
 }
