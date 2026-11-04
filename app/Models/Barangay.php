@@ -21,6 +21,29 @@ use Illuminate\Support\Carbon;
  */
 class Barangay extends Model
 {
+    public const array CAPAS_BARANGAYS = [
+        'Aranguren',
+        'Bueno',
+        'Cristo Rey',
+        'Cubcub',
+        'Cutcut I',
+        'Cutcut II',
+        'Dolores',
+        'Estrada',
+        'Lawy',
+        'Manga',
+        'Manlapig',
+        'Maruglu',
+        "O'Donnell",
+        'Santa Juliana',
+        'Santa Lucia',
+        'Santa Rita',
+        'Santo Domingo I',
+        'Santo Domingo II',
+        'Santo Rosario',
+        'Talaga',
+    ];
+
     /** @use HasFactory<BarangayFactory> */
     use HasFactory;
 
