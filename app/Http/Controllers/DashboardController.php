@@ -21,6 +21,17 @@ class DashboardController extends Controller
                 'surveySubmissions' => SurveyQuestion::query()->count(),
                 'barangays' => Barangay::query()->count(),
             ],
+            'users' => User::query()
+                ->where('role', '!=', 'admin')
+                ->latest()
+                ->paginate(2, [
+                    'id',
+                    'name',
+                    'email',
+                    'role',
+                    'email_verified_at',
+                    'created_at',
+                ]),
         ]);
     }
 

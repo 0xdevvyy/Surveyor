@@ -51,38 +51,38 @@ const metrics = [
         </template>
 
         <div class="mx-auto w-full max-w-7xl p-5 sm:p-8">
-            <header class="mb-8">
-                <p class="text-sm font-medium text-[#167d83]">
-                    Field workspace
+            <header class="mb-6 sm:mb-8">
+                <p class="text-sm font-medium text-crater-teal">
+                    Surveyor workspace
                 </p>
                 <h1
                     class="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl"
                 >
                     Welcome, {{ user.name }}
                 </h1>
-                <p class="mt-2 text-sm text-[#7b898d] dark:text-[#aab6b7]">
+                <p class="mt-2 text-sm text-muted-foreground">
                     Keep track of your submissions and residents reached.
                 </p>
             </header>
 
             <section aria-label="Survey activity">
-                <h2 class="mb-4 text-base font-semibold">
+                <h2 class="mb-3 text-base font-semibold sm:mb-4">
                     Your survey activity
                 </h2>
-                <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                <div class="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-3">
                     <StatCard
                         v-for="metric in metrics"
                         :key="metric.label"
                         :label="metric.label"
                         :value="metric.value"
                         :change-label="metric.changeLabel"
-                        class="border-[#e4e9e6] bg-white dark:border-white/10 dark:bg-[#202e38]"
+                        class="border-border bg-card"
                     >
                         <template #icon>
                             <component
                                 :is="metric.icon"
                                 aria-hidden="true"
-                                class="size-4 text-[#167d83]"
+                                class="size-5 text-accent-foreground"
                             />
                         </template>
                     </StatCard>
@@ -90,11 +90,11 @@ const metrics = [
             </section>
 
             <section
-                class="mt-6 rounded-xl border border-[#e4e9e6] bg-white p-6 dark:border-white/10 dark:bg-[#202e38]"
+                class="mt-6 rounded-xl border border-border bg-card p-5 sm:p-6"
             >
                 <h2 class="text-sm font-semibold">Your fieldwork</h2>
                 <p
-                    class="mt-2 max-w-2xl text-sm leading-6 text-[#7b898d] dark:text-[#aab6b7]"
+                    class="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground"
                 >
                     You have submitted
                     {{ props.metrics.submittedSurveys }} survey responses and

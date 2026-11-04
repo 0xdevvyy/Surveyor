@@ -1,0 +1,176 @@
+<script setup lang="ts">
+import { router } from '@inertiajs/vue3';
+import { Eye, Pencil } from '@lucide/vue';
+import { adminDashboard } from '@/actions/App/Http/Controllers/DashboardController';
+import Avatar from '@/components/ui/data-display/Avatar.vue';
+import Pagination from '@/components/ui/data-display/Pagination.vue';
+import Badge from '@/components/ui/data-display/Badge.vue';
+import EmptyState from '@/components/ui/empty-state/EmptyState.vue';
+import IconButton from '@/components/ui/button/IconButton.vue';
+import Table from '@/components/ui/table/Table.vue';
+import TableBody from '@/components/ui/table/TableBody.vue';
+import TableCell from '@/components/ui/table/TableCell.vue';
+import TableHead from '@/components/ui/table/TableHead.vue';
+import TableHeader from '@/components/ui/table/TableHeader.vue';
+import TableRow from '@/components/ui/table/TableRow.vue';
+import DeleteUserDialog from '@/components/tables/DeleteUserDialog.vue';
+import type { PaginatedUsers, User } from '@/types/auth';
+
+const props = defineProps<{
+    users: PaginatedUsers;
+    currentUserId: string;
+}>();
+
+const emit = defineEmits<{
+    view: [user: User];
+    edit: [user: User];
+}>();
+
+function formatDate(date: string): string {
+    const parsedDate = new Date(date);
+
+    if (Number.isNaN(parsedDate.getTime())) {
+        return '—';
+    }
+
+    return new Intl.DateTimeFormat('en', {
+        dateStyle: 'medium',
+    }).format(parsedDate);
+}
+
+function visitPage(page: number): void {
+    router.get(
+        adminDashboard.url({ query: { page } }),
+        {},
+        {
+            preserveScroll: true,
+            preserveState: true,
+            replace: true,
+        },
+    );
+}
+</script>
+
+<template>
+    <section
+        aria-labelledby="users-table-heading"
+        class="overflow-hidden rounded-xl border border-border bg-card"
+    >
+        <div
+            class="flex flex-col gap-1 border-b border-border px-4 py-4 sm:px-6"
+        >
+            <h2 id="users-table-heading" class="text-base font-semibold">
+                Recent users
+            </h2>
+            <p class="text-sm text-muted-foreground">
+                {{ users.total }}
+                {{ users.total === 1 ? 'account' : 'accounts' }}
+            </p>
+        </div>
+
+        <EmptyState
+            v-if="users.data.length === 0"
+            title="No users yet"
+            description="Registered users will appear here."
+            class="m-4 sm:m-6"
+        />
+
+        <Table v-else>
+            <TableHeader>
+                <TableRow>
+                    <TableHead>User</TableHead>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Role</TableHead>
+                    <TableHead>Account status</TableHead>
+                    <TableHead class="text-right">Joined</TableHead>
+                    <TableHead class="text-right">Actions</TableHead>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+                <TableRow v-for="user in users.data" :key="user.id">
+                    <TableCell>
+                        <div class="flex min-w-48 items-center gap-3">
+                            <Avatar
+                                :src="user.avatar_path ?? undefined"
+                                :name="user.name"
+                                class="size-9"
+                            />
+                            <span class="font-medium text-foreground">
+                                {{ user.name }}
+                            </span>
+                        </div>
+                    </TableCell>
+                    <TableCell class="text-muted-foreground">
+                        {{ user.email }}
+                    </TableCell>
+                    <TableCell>
+                        <Badge
+                            :variant="
+                                user.role === 'admin'
+                                    ? 'default'
+                                    : user.role === 'surveyor'
+                                      ? 'info'
+                                      : 'secondary'
+                            "
+                        >
+                            {{ user.role }}
+                        </Badge>
+                    </TableCell>
+                    <TableCell>
+                        <Badge
+                            :variant="
+                                user.email_verified_at ? 'success' : 'warning'
+                            "
+                        >
+                            {{
+                                user.email_verified_at ? 'Verified' : 'Pending'
+                            }}
+                        </Badge>
+                    </TableCell>
+                    <TableCell
+                        class="text-right whitespace-nowrap text-muted-foreground"
+                    >
+                        {{ formatDate(user.created_at) }}
+                    </TableCell>
+                    <TableCell>
+                        <div class="flex justify-end gap-1">
+                            <IconButton
+                                :label="`View ${user.name}`"
+                                @click="emit('view', user)"
+                            >
+                                <Eye aria-hidden="true" class="size-4" />
+                            </IconButton>
+                            <IconButton
+                                :label="`Edit ${user.name}`"
+                                @click="emit('edit', user)"
+                            >
+                                <Pencil aria-hidden="true" class="size-4" />
+                            </IconButton>
+                            <DeleteUserDialog
+                                :user="user"
+                                :disabled="user.id === currentUserId"
+                            />
+                        </div>
+                    </TableCell>
+                </TableRow>
+            </TableBody>
+        </Table>
+
+        <div
+            v-if="users.data.length > 0"
+            class="flex flex-col items-center justify-between gap-3 border-t border-border px-4 py-3 sm:flex-row sm:px-6"
+        >
+            <p class="text-sm text-muted-foreground">
+                Showing {{ users.from }}–{{ users.to }} of {{ users.total }}
+                accounts
+            </p>
+            <Pagination
+                v-if="users.last_page > 1"
+                :model-value="users.current_page"
+                :total-pages="users.last_page"
+                label="Users pages"
+                @update:model-value="visitPage"
+            />
+        </div>
+    </section>
+</template>
