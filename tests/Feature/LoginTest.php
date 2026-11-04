@@ -1,6 +1,8 @@
 <?php
 
 use App\Enum\RoleEnum;
+use App\Models\Barangay;
+use App\Models\Household;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
 
@@ -53,6 +55,54 @@ test('each role can access its matching dashboard', function (
         'dashboard/Resident',
     ],
 ]);
+
+test('surveyor dashboard reports household counts by barangay', function (): void {
+    $surveyor = User::factory()->create([
+        'role' => RoleEnum::SURVEYOR,
+    ]);
+    $firstResident = User::factory()->create([
+        'role' => RoleEnum::RESIDENT,
+    ]);
+    $secondResident = User::factory()->create([
+        'role' => RoleEnum::RESIDENT,
+    ]);
+    $thirdResident = User::factory()->create([
+        'role' => RoleEnum::RESIDENT,
+    ]);
+    $firstBarangay = Barangay::factory()->create(['name' => 'Alpha']);
+    $secondBarangay = Barangay::factory()->create(['name' => 'Beta']);
+    Barangay::factory()->create(['name' => 'Gamma']);
+
+    Household::factory()->create([
+        'household_number' => 'HH-001',
+        'user_id' => $firstResident->id,
+        'barangay_id' => $firstBarangay->id,
+    ]);
+    Household::factory()->create([
+        'household_number' => 'HH-002',
+        'user_id' => $secondResident->id,
+        'barangay_id' => $firstBarangay->id,
+    ]);
+    Household::factory()->create([
+        'household_number' => 'HH-003',
+        'user_id' => $thirdResident->id,
+        'barangay_id' => $secondBarangay->id,
+    ]);
+
+    $response = $this->actingAs($surveyor)->get(route('auth.surveyor.dashboard'));
+
+    $response->assertOk()->assertInertia(
+        fn (Assert $page) => $page
+            ->component('dashboard/Surveyor')
+            ->has('householdBarangays', 3)
+            ->where('householdBarangays.0.name', 'Alpha')
+            ->where('householdBarangays.0.households', 2)
+            ->where('householdBarangays.1.name', 'Beta')
+            ->where('householdBarangays.1.households', 1)
+            ->where('householdBarangays.2.name', 'Gamma')
+            ->where('householdBarangays.2.households', 0)
+    );
+});
 
 test('admin dashboard lists the most recently registered users', function (): void {
     $admin = User::factory()->create([
