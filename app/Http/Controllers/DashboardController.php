@@ -7,14 +7,18 @@ namespace App\Http\Controllers;
 use App\Models\Barangay;
 use App\Models\SurveyQuestion;
 use App\Models\User;
+use App\Queries\SurveyStats\HouseholdBarangaysQuery;
+use App\Queries\SurveyStats\SurveyProgressByBarangayQuery;
 use Illuminate\Container\Attributes\Authenticated;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class DashboardController extends Controller
 {
-    public function adminDashboard(): Response
-    {
+    public function adminDashboard(
+        HouseholdBarangaysQuery $householdBarangaysQuery,
+        SurveyProgressByBarangayQuery $surveyProgressByBarangayQuery,
+    ): Response {
         return Inertia::render('dashboard/Admin', [
             'metrics' => [
                 'registeredUsers' => User::query()->count(),
@@ -32,28 +36,16 @@ class DashboardController extends Controller
                     'email_verified_at',
                     'created_at',
                 ]),
+            'householdBarangays' => $householdBarangaysQuery->get(),
+            'surveyProgressByBarangay' => $surveyProgressByBarangayQuery->get(),
         ]);
     }
 
-    public function surveyorDashboard(#[Authenticated()] User $user): Response
-    {
-        $householdBarangays = Barangay::query()
-            ->leftJoin(
-                'households',
-                'households.barangay_id',
-                '=',
-                'barangays.id',
-            )
-            ->select('barangays.id', 'barangays.name')
-            ->selectRaw('COUNT(households.id) AS households')
-            ->groupBy('barangays.id', 'barangays.name')
-            ->orderBy('barangays.name')
-            ->get()
-            ->map(fn (Barangay $barangay): array => [
-                'name' => $barangay->name,
-                'households' => (int) $barangay->getAttribute('households'),
-            ]);
-
+    public function surveyorDashboard(
+        #[Authenticated()] User $user,
+        HouseholdBarangaysQuery $householdBarangaysQuery,
+        SurveyProgressByBarangayQuery $surveyProgressByBarangayQuery,
+    ): Response {
         return Inertia::render('dashboard/Surveyor', [
             'metrics' => [
                 'surveysToday' => $user
@@ -63,7 +55,8 @@ class DashboardController extends Controller
                 'submittedSurveys' => $user->surveysAsSurveyor()->count(),
                 'residentsReached' => $user->surveysAsSurveyor()->distinct()->count('residents_id'),
             ],
-            'householdBarangays' => $householdBarangays,
+            'householdBarangays' => $householdBarangaysQuery->get(),
+            'surveyProgressByBarangay' => $surveyProgressByBarangayQuery->get(),
         ]);
     }
 

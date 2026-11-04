@@ -3,7 +3,9 @@
 use App\Enum\RoleEnum;
 use App\Models\Barangay;
 use App\Models\Household;
+use App\Models\SurveyQuestion;
 use App\Models\User;
+use Database\Seeders\SurveyQuestionSeeder;
 use Inertia\Testing\AssertableInertia as Assert;
 
 test('database sessions retain authenticated UUID user IDs', function (): void {
@@ -60,6 +62,9 @@ test('surveyor dashboard reports household counts by barangay', function (): voi
     $surveyor = User::factory()->create([
         'role' => RoleEnum::SURVEYOR,
     ]);
+    $anotherSurveyor = User::factory()->create([
+        'role' => RoleEnum::SURVEYOR,
+    ]);
     $firstResident = User::factory()->create([
         'role' => RoleEnum::RESIDENT,
     ]);
@@ -69,9 +74,18 @@ test('surveyor dashboard reports household counts by barangay', function (): voi
     $thirdResident = User::factory()->create([
         'role' => RoleEnum::RESIDENT,
     ]);
-    $firstBarangay = Barangay::factory()->create(['name' => 'Alpha']);
-    $secondBarangay = Barangay::factory()->create(['name' => 'Beta']);
-    Barangay::factory()->create(['name' => 'Gamma']);
+    $fourthResident = User::factory()->create([
+        'role' => RoleEnum::RESIDENT,
+    ]);
+    $firstBarangay = Barangay::factory()->create([
+        'name' => 'Alpha',
+    ]);
+    $secondBarangay = Barangay::factory()->create([
+        'name' => 'Beta',
+    ]);
+    Barangay::factory()->create([
+        'name' => 'Gamma',
+    ]);
 
     Household::factory()->create([
         'household_number' => 'HH-001',
@@ -84,9 +98,26 @@ test('surveyor dashboard reports household counts by barangay', function (): voi
         'barangay_id' => $firstBarangay->id,
     ]);
     Household::factory()->create([
+        'household_number' => 'HH-004',
+        'user_id' => $fourthResident->id,
+        'barangay_id' => $firstBarangay->id,
+    ]);
+    Household::factory()->create([
         'household_number' => 'HH-003',
         'user_id' => $thirdResident->id,
         'barangay_id' => $secondBarangay->id,
+    ]);
+    SurveyQuestion::factory()->create([
+        'surveyor_id' => $surveyor->id,
+        'residents_id' => $firstResident->id,
+    ]);
+    SurveyQuestion::factory()->create([
+        'surveyor_id' => $surveyor->id,
+        'residents_id' => $firstResident->id,
+    ]);
+    SurveyQuestion::factory()->create([
+        'surveyor_id' => $anotherSurveyor->id,
+        'residents_id' => $secondResident->id,
     ]);
 
     $response = $this->actingAs($surveyor)->get(route('auth.surveyor.dashboard'));
@@ -96,11 +127,98 @@ test('surveyor dashboard reports household counts by barangay', function (): voi
             ->component('dashboard/Surveyor')
             ->has('householdBarangays', 3)
             ->where('householdBarangays.0.name', 'Alpha')
-            ->where('householdBarangays.0.households', 2)
+            ->where('householdBarangays.0.households', 3)
             ->where('householdBarangays.1.name', 'Beta')
             ->where('householdBarangays.1.households', 1)
             ->where('householdBarangays.2.name', 'Gamma')
             ->where('householdBarangays.2.households', 0)
+            ->has('surveyProgressByBarangay', 3)
+            ->where('surveyProgressByBarangay.0.name', 'Alpha')
+            ->where('surveyProgressByBarangay.0.totalResidents', 3)
+            ->where('surveyProgressByBarangay.0.surveyedResidents', 2)
+            ->where('surveyProgressByBarangay.1.name', 'Beta')
+            ->where('surveyProgressByBarangay.1.totalResidents', 1)
+            ->where('surveyProgressByBarangay.1.surveyedResidents', 0)
+            ->where('surveyProgressByBarangay.2.totalResidents', 0)
+            ->where('surveyProgressByBarangay.2.surveyedResidents', 0)
+    );
+});
+
+test('admin dashboard reports community charts across all surveyors', function (): void {
+    $admin = User::factory()->admin()->create();
+    $firstSurveyor = User::factory()->surveyor()->create();
+    $secondSurveyor = User::factory()->surveyor()->create();
+    $firstResident = User::factory()->resident()->create();
+    $secondResident = User::factory()->resident()->create();
+    $barangay = Barangay::factory()->create(['name' => 'Alpha']);
+    Barangay::factory()->create(['name' => 'Beta']);
+
+    Household::factory()
+        ->for($firstResident)
+        ->for($barangay)
+        ->create(['household_number' => 'HH-ADMIN-001']);
+    Household::factory()
+        ->for($secondResident)
+        ->for($barangay)
+        ->create(['household_number' => 'HH-ADMIN-002']);
+    SurveyQuestion::factory()->create([
+        'surveyor_id' => $firstSurveyor->id,
+        'residents_id' => $firstResident->id,
+    ]);
+    SurveyQuestion::factory()->create([
+        'surveyor_id' => $secondSurveyor->id,
+        'residents_id' => $secondResident->id,
+    ]);
+
+    $response = $this->actingAs($admin)->get(route('auth.admin.dashboard'));
+
+    $response->assertOk()->assertInertia(
+        fn (Assert $page) => $page
+            ->component('dashboard/Admin')
+            ->has('householdBarangays', 2)
+            ->where('householdBarangays.0.name', 'Alpha')
+            ->where('householdBarangays.0.households', 2)
+            ->where('householdBarangays.1.name', 'Beta')
+            ->where('householdBarangays.1.households', 0)
+            ->has('surveyProgressByBarangay', 2)
+            ->where('surveyProgressByBarangay.0.name', 'Alpha')
+            ->where('surveyProgressByBarangay.0.totalResidents', 2)
+            ->where('surveyProgressByBarangay.0.surveyedResidents', 2)
+            ->where('surveyProgressByBarangay.1.totalResidents', 0)
+            ->where('surveyProgressByBarangay.1.surveyedResidents', 0)
+    );
+});
+
+test('seeded survey responses count under the resident household barangay', function (): void {
+    $surveyor = User::factory()->surveyor()->create();
+    $firstResident = User::factory()->resident()->create();
+    $secondResident = User::factory()->resident()->create();
+    $firstBarangay = Barangay::factory()->create([
+        'name' => 'Alpha',
+    ]);
+    $secondBarangay = Barangay::factory()->create([
+        'name' => 'Beta',
+    ]);
+
+    Household::factory()
+        ->for($firstResident)
+        ->for($firstBarangay)
+        ->create(['household_number' => 'HH-SEED-001']);
+    Household::factory()
+        ->for($secondResident)
+        ->for($secondBarangay)
+        ->create(['household_number' => 'HH-SEED-002']);
+
+    app(SurveyQuestionSeeder::class)->run();
+
+    $response = $this->actingAs($surveyor)->get(route('auth.surveyor.dashboard'));
+
+    $response->assertOk()->assertInertia(
+        fn (Assert $page) => $page
+            ->where('surveyProgressByBarangay.0.name', 'Alpha')
+            ->where('surveyProgressByBarangay.0.surveyedResidents', 1)
+            ->where('surveyProgressByBarangay.1.name', 'Beta')
+            ->where('surveyProgressByBarangay.1.surveyedResidents', 1)
     );
 });
 

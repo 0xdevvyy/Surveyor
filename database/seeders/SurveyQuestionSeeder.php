@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enum\RoleEnum;
 use App\Models\Household;
 use App\Models\SurveyQuestion;
 use App\Models\User;
@@ -14,38 +15,45 @@ class SurveyQuestionSeeder extends Seeder
      */
     public function run(): void
     {
-        $surveyorEmail = 'demo.surveyor@example.test';
-        $surveyor = User::query()->where('email', $surveyorEmail)->first();
+        $surveyors = User::query()
+            ->where('role', RoleEnum::SURVEYOR->value)
+            ->get();
 
-        if ($surveyor === null) {
-            $surveyor = User::factory()->surveyor()->create([
-                'name' => 'Demo Surveyor',
-                'email' => $surveyorEmail,
+        if ($surveyors->isEmpty()) {
+            $surveyors = collect([
+                User::factory()->surveyor()->create([
+                    'name' => 'Demo Surveyor',
+                    'email' => 'demo.surveyor@example.test',
+                ]),
             ]);
         }
 
-        Household::query()
-            ->with('user')
+        $households = Household::query()
             ->orderBy('household_number')
-            ->get()
-            ->each(function (Household $household, int $index) use ($surveyor): void {
-                $alreadySeeded = SurveyQuestion::query()
-                    ->where('surveyor_id', $surveyor->getKey())
-                    ->where('residents_id', $household->user_id)
-                    ->exists();
+            ->get();
 
-                if ($alreadySeeded) {
-                    return;
-                }
+        foreach ($surveyors as $surveyor) {
+            $households->each(
+                function (Household $household, int $index) use ($surveyor): void {
+                    $alreadySeeded = SurveyQuestion::query()
+                        ->where('surveyor_id', $surveyor->getKey())
+                        ->where('residents_id', $household->user_id)
+                        ->exists();
 
-                $createdAt = $index < 5
-                    ? now()
-                    : now()->subDays(($index % 30) + 1);
+                    if ($alreadySeeded) {
+                        return;
+                    }
 
-                SurveyQuestion::factory()
-                    ->for($surveyor, 'surveyor')
-                    ->for($household->user, 'resident')
-                    ->create(['created_at' => $createdAt]);
-            });
+                    $createdAt = $index < 5
+                        ? now()
+                        : now()->subDays(($index % 30) + 1);
+
+                    SurveyQuestion::factory()
+                        ->forHousehold($household)
+                        ->for($surveyor, 'surveyor')
+                        ->create(['created_at' => $createdAt]);
+                },
+            );
+        }
     }
 }

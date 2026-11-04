@@ -15,6 +15,11 @@ const props = defineProps<{
         name: string;
         households: number;
     }[];
+    surveyProgressByBarangay: {
+        name: string;
+        totalResidents: number;
+        surveyedResidents: number;
+    }[];
 }>();
 
 const user = usePage().props.auth.user;
@@ -83,9 +88,11 @@ const metrics = [
 
         <section
             aria-label="Survey charts"
-            class="mt-6 grid gap-4 sm:gap-6 lg:grid-cols-2"
+            class="mt-6 grid min-w-0 grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-2"
         >
-            <SurveyProgressChart :survey-progress="props.metrics" />
+            <SurveyProgressChart
+                :survey-progress-by-barangay="props.surveyProgressByBarangay"
+            />
             <HouseholdBarangaysChart
                 :household-barangays="props.householdBarangays"
             />

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { Head, usePage } from '@inertiajs/vue3';
 import { ClipboardCheck, MapPin, Users } from '@lucide/vue';
+import HouseholdBarangaysChart from '@/components/dashboard/HouseholdBarangaysChart.vue';
+import SurveyProgressChart from '@/components/dashboard/SurveyProgressChart.vue';
 import StatCard from '@/components/ui/card/StatCard.vue';
 import UserTable from '@/components/tables/UserTable.vue';
 import type { PaginatedUsers } from '@/types/auth';
@@ -12,6 +14,15 @@ const props = defineProps<{
         surveySubmissions: number;
         barangays: number;
     };
+    householdBarangays: {
+        name: string;
+        households: number;
+    }[];
+    surveyProgressByBarangay: {
+        name: string;
+        totalResidents: number;
+        surveyedResidents: number;
+    }[];
 }>();
 
 const user = usePage().props.auth.user;
@@ -74,6 +85,18 @@ const metrics = [
                     </template>
                 </StatCard>
             </div>
+        </section>
+
+        <section
+            aria-label="Community survey charts"
+            class="mt-6 grid min-w-0 grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-2"
+        >
+            <SurveyProgressChart
+                :survey-progress-by-barangay="props.surveyProgressByBarangay"
+            />
+            <HouseholdBarangaysChart
+                :household-barangays="props.householdBarangays"
+            />
         </section>
 
         <UserTable

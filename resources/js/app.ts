@@ -10,6 +10,7 @@ void createInertiaApp({
             case name === 'Welcome':
             case name.startsWith('auth/'):
             case name === 'dashboard/Resident':
+                // case name === 'dashboard/Surveyor':
                 return null;
             default:
                 return AppLayout;

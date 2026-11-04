@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Household;
 use App\Models\SurveyQuestion;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -63,5 +64,12 @@ class SurveyQuestionFactory extends Factory
             'is_senior_beneficiary_member' => fake()->boolean(),
             'other_concerns' => fake()->optional()->sentence(),
         ];
+    }
+
+    public function forHousehold(Household $household): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'residents_id' => $household->user_id,
+        ]);
     }
 }
