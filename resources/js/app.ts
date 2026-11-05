@@ -9,7 +9,7 @@ void createInertiaApp({
         switch (true) {
             case name === 'Welcome':
             case name.startsWith('auth/'):
-            case name === 'dashboard/Resident':
+                // case name === 'dashboard/Resident':
                 // case name === 'dashboard/Surveyor':
                 return null;
             default:
