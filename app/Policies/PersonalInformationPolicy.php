@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Policies;
 
+use App\Enum\RoleEnum;
 use App\Models\PersonalInformation;
 use App\Models\User;
 
@@ -22,7 +23,10 @@ class PersonalInformationPolicy
      */
     public function view(User $user, PersonalInformation $personalInformation): bool
     {
-        return false;
+        return match ($user->role) {
+            RoleEnum::ADMIN, RoleEnum::SURVEYOR => true,
+            RoleEnum::RESIDENT => $user->id === $personalInformation->user_id,
+        };
     }
 
     /**
@@ -38,7 +42,10 @@ class PersonalInformationPolicy
      */
     public function update(User $user, PersonalInformation $personalInformation): bool
     {
-        return false;
+        return match ($user->role) {
+            RoleEnum::ADMIN, RoleEnum::SURVEYOR => true,
+            RoleEnum::RESIDENT => $user->id === $personalInformation->user_id,
+        };
     }
 
     /**

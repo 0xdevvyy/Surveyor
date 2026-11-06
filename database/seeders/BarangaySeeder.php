@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Barangay;
 use Illuminate\Database\Seeder;
 
 class BarangaySeeder extends Seeder
@@ -11,6 +12,8 @@ class BarangaySeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        foreach (Barangay::CAPAS_BARANGAYS as $name) {
+            Barangay::query()->firstOrCreate(['name' => $name]);
+        }
     }
 }

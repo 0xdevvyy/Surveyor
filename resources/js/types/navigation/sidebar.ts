@@ -3,7 +3,7 @@ import {
     residentDashboard,
     surveyorDashboard,
 } from '@/actions/App/Http/Controllers/DashboardController';
-import { LayoutDashboard } from '@lucide/vue';
+import { House, LayoutDashboard, MapPin, Users } from '@lucide/vue';
 import type { Component } from 'vue';
 
 export interface NavChild {
@@ -28,6 +28,24 @@ export function getNavItems(role?: string): NavItem[] {
                     icon: LayoutDashboard,
                     type: 'link',
                     href: adminDashboard(),
+                },
+                {
+                    label: 'Users',
+                    icon: Users,
+                    type: 'link',
+                    href: '/admin/users',
+                },
+                {
+                    label: 'Barangays',
+                    icon: MapPin,
+                    type: 'link',
+                    href: '/admin/barangays',
+                },
+                {
+                    label: 'Households',
+                    icon: House,
+                    type: 'link',
+                    href: '/admin/households',
                 },
             ];
 

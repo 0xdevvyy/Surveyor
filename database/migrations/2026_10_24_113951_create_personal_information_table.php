@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('suffix')->nullable();
             $table->string('blood_type')->nullable();
             $table->string('gender');
-            $table->integer('age');
+            $table->unsignedInteger('age');
             $table->date('birthdate');
             $table->string('phone_number');
             $table->string('email');

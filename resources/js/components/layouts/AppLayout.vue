@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Menu, X } from '@lucide/vue';
+import AppSidebar from '@/components/layouts/AppSidebar.vue';
 import { cn } from '@/lib/utils';
 import {
     getSidebarCollapsed,
@@ -113,7 +114,12 @@ onUnmounted(() => {
                     name="sidebar"
                     :collapsed="isSidebarCollapsedOnDesktop"
                     :toggle-collapse="toggleSidebarCollapsed"
-                />
+                >
+                    <AppSidebar
+                        :collapsed="isSidebarCollapsedOnDesktop"
+                        @toggle-collapse="toggleSidebarCollapsed"
+                    />
+                </slot>
             </div>
             <main class="min-h-0 min-w-0 flex-1 overflow-y-auto pt-16 md:pt-0">
                 <slot />
