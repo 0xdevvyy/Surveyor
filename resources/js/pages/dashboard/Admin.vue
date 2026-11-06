@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { Head, usePage } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 import { ClipboardCheck, MapPin, Users } from '@lucide/vue';
+import { index as usersIndex } from '@/actions/App/Http/Controllers/UserController';
 import HouseholdBarangaysChart from '@/components/dashboard/HouseholdBarangaysChart.vue';
 import SurveyProgressChart from '@/components/dashboard/SurveyProgressChart.vue';
 import StatCard from '@/components/ui/card/StatCard.vue';
@@ -58,9 +59,17 @@ const metrics = [
             <h1 class="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
                 Welcome, {{ user.name }}
             </h1>
-            <p class="mt-2 text-sm text-muted-foreground">
-                Manage the survey platform and monitor community data.
-            </p>
+            <div class="mt-2 flex flex-wrap items-center justify-between gap-3">
+                <p class="text-sm text-muted-foreground">
+                    Manage the survey platform and monitor community data.
+                </p>
+                <Link
+                    :href="usersIndex.url()"
+                    class="inline-flex min-h-10 items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent"
+                >
+                    Manage users
+                </Link>
+            </div>
         </header>
 
         <section aria-label="Platform overview">

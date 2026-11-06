@@ -19,6 +19,8 @@ import type { PaginatedUsers, User } from '@/types/auth';
 const props = defineProps<{
     users: PaginatedUsers;
     currentUserId: string;
+    title?: string;
+    paginationUrl?: (page: number) => string;
 }>();
 
 const emit = defineEmits<{
@@ -40,7 +42,7 @@ function formatDate(date: string): string {
 
 function visitPage(page: number): void {
     router.get(
-        adminDashboard.url({ query: { page } }),
+        props.paginationUrl?.(page) ?? adminDashboard.url({ query: { page } }),
         {},
         {
             preserveScroll: true,
@@ -60,7 +62,7 @@ function visitPage(page: number): void {
             class="flex flex-col gap-1 border-b border-border px-4 py-4 sm:px-6"
         >
             <h2 id="users-table-heading" class="text-base font-semibold">
-                Recent users
+                {{ props.title ?? 'Recent users' }}
             </h2>
             <p class="text-sm text-muted-foreground">
                 {{ users.total }}
@@ -81,6 +83,7 @@ function visitPage(page: number): void {
                     <TableHead>User</TableHead>
                     <TableHead>Email</TableHead>
                     <TableHead>Role</TableHead>
+                    <TableHead>Barangay / house number</TableHead>
                     <TableHead>Account status</TableHead>
                     <TableHead class="text-right">Joined</TableHead>
                     <TableHead class="text-right">Actions</TableHead>
@@ -91,7 +94,7 @@ function visitPage(page: number): void {
                     <TableCell>
                         <div class="flex min-w-48 items-center gap-3">
                             <Avatar
-                                :src="user.avatar_path ?? undefined"
+                                :src="user.avatarPath ?? undefined"
                                 :name="user.name"
                                 class="size-9"
                             />
@@ -117,20 +120,37 @@ function visitPage(page: number): void {
                         </Badge>
                     </TableCell>
                     <TableCell>
+                        <ul
+                            v-if="user.households?.length"
+                            class="grid gap-1 text-sm"
+                        >
+                            <li
+                                v-for="household in user.households"
+                                :key="`${household.barangay}-${household.householdNumber}`"
+                            >
+                                <span class="font-medium text-foreground">
+                                    {{ household.barangay }}
+                                </span>
+                                <span class="text-muted-foreground">
+                                    · {{ household.householdNumber }}
+                                </span>
+                            </li>
+                        </ul>
+                        <span v-else class="text-muted-foreground">—</span>
+                    </TableCell>
+                    <TableCell>
                         <Badge
                             :variant="
-                                user.email_verified_at ? 'success' : 'warning'
+                                user.emailVerifiedAt ? 'success' : 'warning'
                             "
                         >
-                            {{
-                                user.email_verified_at ? 'Verified' : 'Pending'
-                            }}
+                            {{ user.emailVerifiedAt ? 'Verified' : 'Pending' }}
                         </Badge>
                     </TableCell>
                     <TableCell
                         class="text-right whitespace-nowrap text-muted-foreground"
                     >
-                        {{ formatDate(user.created_at) }}
+                        {{ formatDate(user.createdAt) }}
                     </TableCell>
                     <TableCell>
                         <div class="flex justify-end gap-1">

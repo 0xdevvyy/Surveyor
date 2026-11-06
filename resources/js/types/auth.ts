@@ -4,9 +4,16 @@ export type User = {
     email: string;
     role: string;
     avatar_path?: string | null;
-    email_verified_at: string | null;
-    created_at: string;
-    updated_at: string;
+    email_verified_at?: string | null;
+    created_at?: string;
+    avatarPath?: string | null;
+    emailVerifiedAt: string | null;
+    createdAt: string;
+    households?: {
+        householdNumber: string;
+        barangay: string;
+    }[];
+    updated_at?: string;
     [key: string]: unknown;
 };
 
