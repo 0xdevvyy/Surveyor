@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Policies;
 
+use App\Enum\RoleEnum;
 use App\Models\Barangay;
 use App\Models\User;
 
@@ -38,7 +39,7 @@ class BarangayPolicy
      */
     public function update(User $user, Barangay $barangay): bool
     {
-        return false;
+        return in_array($user->role, [RoleEnum::ADMIN, RoleEnum::SURVEYOR], true);
     }
 
     /**

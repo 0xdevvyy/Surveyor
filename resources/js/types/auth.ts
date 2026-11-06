@@ -7,6 +7,7 @@ export type User = {
     email_verified_at?: string | null;
     created_at?: string;
     hasPersonalInformation?: boolean;
+    personalInformationId?: string | null;
     avatarPath?: string | null;
     emailVerifiedAt: string | null;
     createdAt: string;

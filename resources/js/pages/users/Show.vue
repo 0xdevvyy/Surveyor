@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
-import { ArrowLeft, ContactRound, House, MapPin, UserRound } from '@lucide/vue';
+import {
+    ArrowLeft,
+    ContactRound,
+    House,
+    MapPin,
+    Pencil,
+    UserRound,
+} from '@lucide/vue';
+import { edit as editPersonalInformation } from '@/actions/App/Http/Controllers/PersonalInformationController';
 import SectionCard from '@/components/ui/card/SectionCard.vue';
 
 type PersonalInformation = {
@@ -18,10 +26,12 @@ type PersonalInformation = {
 
 const props = defineProps<{
     user: {
+        id: string;
         name: string;
         role: string;
     };
     personalInformation: PersonalInformation;
+    canEditPersonalInformation: boolean;
     households: {
         id: string;
         householdNumber: string;
@@ -67,6 +77,16 @@ function formatBirthdate(birthdate: string): string {
                     Personal information on file for this user.
                 </p>
             </div>
+            <Link
+                v-if="props.canEditPersonalInformation"
+                :href="
+                    editPersonalInformation.url(props.personalInformation.id)
+                "
+                class="hover:bg-primary-hover inline-flex w-fit items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+            >
+                <Pencil aria-hidden="true" class="size-4" />
+                Edit personal information
+            </Link>
         </header>
 
         <div class="grid gap-6 lg:grid-cols-2">

@@ -28,6 +28,7 @@ class UsersQuery
                 'created_at',
             ])
             ->with([
+                'personalInformation:id,user_id',
                 'households:id,user_id,household_number,barangay_id',
                 'households.barangay:id,name',
             ])

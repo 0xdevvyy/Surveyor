@@ -3,6 +3,7 @@
 use App\Enum\RoleEnum;
 use App\Models\Barangay;
 use App\Models\Household;
+use App\Models\PersonalInformation;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
 
@@ -11,6 +12,9 @@ test('admin can list every non-admin user', function (): void {
     $resident = User::factory()->resident()->create([
         'name' => 'A Resident',
     ]);
+    $personalInformation = PersonalInformation::factory()
+        ->for($resident)
+        ->create();
     $surveyor = User::factory()->surveyor()->create([
         'name' => 'A Surveyor',
     ]);
@@ -24,6 +28,8 @@ test('admin can list every non-admin user', function (): void {
             ->where('users.total', 2)
             ->where('users.data.0.id', $resident->id)
             ->where('users.data.0.name', 'A Resident')
+            ->where('users.data.0.hasPersonalInformation', true)
+            ->where('users.data.0.personalInformationId', $personalInformation->id)
             ->has('users.data.0.emailVerifiedAt')
             ->where('users.data.1.id', $surveyor->id)
             ->where('filters.role', null)

@@ -2,7 +2,10 @@
 import { Link, router } from '@inertiajs/vue3';
 import { Eye, Pencil } from '@lucide/vue';
 import { adminDashboard } from '@/actions/App/Http/Controllers/DashboardController';
-import { show as personalInformationShow } from '@/actions/App/Http/Controllers/PersonalInformationController';
+import {
+    edit as personalInformationEdit,
+    show as personalInformationShow,
+} from '@/actions/App/Http/Controllers/PersonalInformationController';
 import Avatar from '@/components/ui/data-display/Avatar.vue';
 import Pagination from '@/components/ui/data-display/Pagination.vue';
 import Badge from '@/components/ui/data-display/Badge.vue';
@@ -15,17 +18,13 @@ import TableHead from '@/components/ui/table/TableHead.vue';
 import TableHeader from '@/components/ui/table/TableHeader.vue';
 import TableRow from '@/components/ui/table/TableRow.vue';
 import DeleteUserDialog from '@/components/tables/DeleteUserDialog.vue';
-import type { PaginatedUsers, User } from '@/types/auth';
+import type { PaginatedUsers } from '@/types/auth';
 
 const props = defineProps<{
     users: PaginatedUsers;
     currentUserId: string;
     title?: string;
     paginationUrl?: (page: number) => string;
-}>();
-
-const emit = defineEmits<{
-    edit: [user: User];
 }>();
 
 function formatDate(date: string): string {
@@ -170,9 +169,23 @@ function visitPage(page: number): void {
                             >
                                 <Eye aria-hidden="true" class="size-4" />
                             </IconButton>
+                            <Link
+                                v-if="user.personalInformationId"
+                                :href="
+                                    personalInformationEdit.url(
+                                        user.personalInformationId,
+                                    )
+                                "
+                                :aria-label="`Edit ${user.name}'s personal information`"
+                                :title="`Edit ${user.name}'s personal information`"
+                                class="inline-flex size-10 shrink-0 items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
+                            >
+                                <Pencil aria-hidden="true" class="size-4" />
+                            </Link>
                             <IconButton
-                                :label="`Edit ${user.name}`"
-                                @click="emit('edit', user)"
+                                v-else
+                                label="Personal information is unavailable"
+                                disabled
                             >
                                 <Pencil aria-hidden="true" class="size-4" />
                             </IconButton>

@@ -30,6 +30,10 @@ class UserResource extends JsonResource
             'emailVerifiedAt' => $this->email_verified_at,
             'createdAt' => $this->created_at,
             'hasPersonalInformation' => $this->whenHas('personal_information_exists'),
+            'personalInformationId' => $this->whenLoaded(
+                'personalInformation',
+                fn (): ?string => $this->personalInformation?->id,
+            ),
             'households' => $this->whenLoaded(
                 'households',
                 fn () => $this->households

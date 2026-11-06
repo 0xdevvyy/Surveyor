@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Policies;
 
+use App\Enum\RoleEnum;
 use App\Models\Household;
 use App\Models\User;
 
@@ -38,7 +39,7 @@ class HouseholdPolicy
      */
     public function update(User $user, Household $household): bool
     {
-        return false;
+        return in_array($user->role, [RoleEnum::ADMIN, RoleEnum::SURVEYOR], true);
     }
 
     /**

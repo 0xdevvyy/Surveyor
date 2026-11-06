@@ -8,6 +8,12 @@ Route::inertia('/login', 'auth/login')->name('login');
 Route::get('/users/{user}/personal-information', [PersonalInformationController::class, 'show'])
     ->middleware('auth')
     ->name('users.personal-information.show');
+Route::get('/personal-information/{personalInformation}/edit', [PersonalInformationController::class, 'edit'])
+    ->middleware('auth')
+    ->name('users.personal-information.edit');
+Route::put('/personal-information/{personalInformation}', [PersonalInformationController::class, 'update'])
+    ->middleware('auth')
+    ->name('users.personal-information.update');
 
 // Route::get('/dashboard', [DashboardController::class, 'adminDashboard'])
 //     ->middleware('auth')

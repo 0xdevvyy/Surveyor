@@ -42,7 +42,10 @@ class PersonalInformationPolicy
      */
     public function update(User $user, PersonalInformation $personalInformation): bool
     {
-        return false;
+        return match ($user->role) {
+            RoleEnum::ADMIN, RoleEnum::SURVEYOR => true,
+            RoleEnum::RESIDENT => $user->id === $personalInformation->user_id,
+        };
     }
 
     /**
