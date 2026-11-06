@@ -29,6 +29,7 @@ class UserResource extends JsonResource
             'role' => $this->role,
             'emailVerifiedAt' => $this->email_verified_at,
             'createdAt' => $this->created_at,
+            'hasPersonalInformation' => $this->whenHas('personal_information_exists'),
             'households' => $this->whenLoaded(
                 'households',
                 fn () => $this->households

@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { router } from '@inertiajs/vue3';
+import { Link, router } from '@inertiajs/vue3';
 import { Eye, Pencil } from '@lucide/vue';
 import { adminDashboard } from '@/actions/App/Http/Controllers/DashboardController';
+import { show as personalInformationShow } from '@/actions/App/Http/Controllers/PersonalInformationController';
 import Avatar from '@/components/ui/data-display/Avatar.vue';
 import Pagination from '@/components/ui/data-display/Pagination.vue';
 import Badge from '@/components/ui/data-display/Badge.vue';
@@ -24,7 +25,6 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-    view: [user: User];
     edit: [user: User];
 }>();
 
@@ -154,9 +154,19 @@ function visitPage(page: number): void {
                     </TableCell>
                     <TableCell>
                         <div class="flex justify-end gap-1">
+                            <Link
+                                v-if="user.hasPersonalInformation"
+                                :href="personalInformationShow.url(user.id)"
+                                :aria-label="`View ${user.name}'s personal information`"
+                                :title="`View ${user.name}'s personal information`"
+                                class="inline-flex size-10 shrink-0 items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
+                            >
+                                <Eye aria-hidden="true" class="size-4" />
+                            </Link>
                             <IconButton
-                                :label="`View ${user.name}`"
-                                @click="emit('view', user)"
+                                v-else
+                                label="Personal information is unavailable"
+                                disabled
                             >
                                 <Eye aria-hidden="true" class="size-4" />
                             </IconButton>

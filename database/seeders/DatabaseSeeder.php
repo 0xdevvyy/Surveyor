@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
         if (app()->isLocal()) {
             $this->call([
                 HouseholdSeeder::class,
+                PersonalInformationSeeder::class,
                 SurveyQuestionSeeder::class,
             ]);
         }

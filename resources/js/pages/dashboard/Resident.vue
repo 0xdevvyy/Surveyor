@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, usePage } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 import {
     CalendarDays,
     CheckCircle2,
@@ -9,6 +9,7 @@ import {
     UserRound,
     UsersRound,
 } from '@lucide/vue';
+import { show as personalInformationShow } from '@/actions/App/Http/Controllers/PersonalInformationController';
 import SectionCard from '@/components/ui/card/SectionCard.vue';
 import StatCard from '@/components/ui/card/StatCard.vue';
 
@@ -243,6 +244,13 @@ function formatDate(date: string | null): string {
                                 : 'Add your personal information so your resident profile is complete.'
                         }}
                     </p>
+                    <Link
+                        v-if="props.metrics.hasPersonalInformation"
+                        :href="personalInformationShow.url(user.id)"
+                        class="mt-4 inline-flex min-h-10 items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                    >
+                        View your personal information
+                    </Link>
                 </div>
             </SectionCard>
         </section>

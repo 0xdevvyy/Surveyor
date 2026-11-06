@@ -25,7 +25,7 @@ class UpdatePersonalInformationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'age' => ['integer', 'min:0'],
         ];
     }
 }

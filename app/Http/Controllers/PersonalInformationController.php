@@ -4,9 +4,18 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Enum\RoleEnum;
 use App\Http\Requests\StorePersonalInformationRequest;
 use App\Http\Requests\UpdatePersonalInformationRequest;
+use App\Http\Resources\PersonalInformationResource;
+use App\Models\Household;
 use App\Models\PersonalInformation;
+use App\Models\User;
+use Illuminate\Container\Attributes\Authenticated;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class PersonalInformationController extends Controller
 {
@@ -37,9 +46,39 @@ class PersonalInformationController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(PersonalInformation $personalInformation): void
-    {
-        //
+    public function show(
+        #[Authenticated] User $authenticatedUser,
+        User $user,
+        Request $request,
+    ): Response {
+        $personalInformation = $user->personalInformation()
+            ->with('user')
+            ->firstOrFail();
+
+        Gate::authorize('view', $personalInformation);
+
+        $user->load('households.barangay');
+
+        return Inertia::render('users/Show', [
+            'user' => [
+                'name' => $user->name,
+                'role' => $user->role->value,
+            ],
+            'personalInformation' => PersonalInformationResource::make($personalInformation)
+                ->resolve($request),
+            'households' => $user->households
+                ->map(fn (Household $household): array => [
+                    'id' => $household->id,
+                    'householdNumber' => $household->household_number,
+                    'barangay' => $household->barangay->name,
+                ])
+                ->values(),
+            'backUrl' => match ($authenticatedUser->role) {
+                RoleEnum::ADMIN => route('auth.admin.users.index'),
+                RoleEnum::SURVEYOR => route('auth.surveyor.dashboard'),
+                RoleEnum::RESIDENT => route('auth.resident.dashboard'),
+            },
+        ]);
     }
 
     /**

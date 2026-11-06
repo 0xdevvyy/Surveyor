@@ -31,6 +31,7 @@ class UsersQuery
                 'households:id,user_id,household_number,barangay_id',
                 'households.barangay:id,name',
             ])
+            ->withExists('personalInformation')
             ->where('role', '!=', RoleEnum::ADMIN->value)
             ->when(
                 $role !== null,
